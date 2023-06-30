@@ -11,7 +11,10 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(myMap);
 
 // Load the GeoJSON data.
-let geoData = "https://openlayers.org/en/v4.6.5/examples/data/geojson/countries.geojson";
+// let geoData = "complete.json";
+
+const geoData = require('./complete.json');
+console.log(data);
 
 let geojson;
 
@@ -22,7 +25,7 @@ d3.json(geoData).then(function(data) {
   geojson = L.choropleth(data, {
 
     // Define which property in the features to use.
-    valueProperty: properties.name,
+    valueProperty: "population",
 
     // Set the color scale.
     scale: ["#ffffb2", "#b10026"],
