@@ -1,52 +1,129 @@
-// Creating the map object
-let myMap = L.map("map", {
-    center: [37.0902, -95.7129],
-    zoom: 2
+const url = "https://restcountries.com/v3.1/all";
+
+// Initialize the dashboard at start up 
+function init() {
+
+  // Use D3 to select the dropdown menu
+  let dropdownMenu = d3.select("#selDataset");
+
+  // Use D3 to get sample names and populate the drop-down selector
+  d3.json(url).then((data) => {
+      
+      // Set a variable for the sample names
+      let names = data.names;
+
+      // Add  samples to dropdown menu
+      names.forEach((id) => {
+
+          // Log the value of id for each iteration of the loop
+          console.log(id);
+
+          dropdownMenu.append("option")
+          .text(id)
+          .property("value",id);
+      });
+
+      // Set the first sample from the list
+      let firstSample = names[0];
+
+      // Log the value of sample_one
+      console.log(firstSample);
+
+      // Build the initial plots
+      displayBubble(firstSample);
+      displayMarker(firstSample);
+
   });
-// Adding the tile layer
+};
+
+function displayBubble() {
+
+  // Creating the map object
+let myMap = L.map("map", {
+  center: [34, 27],
+  zoom: 2.2
+});
 
 // Adding the tile layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(myMap);
 
-// Load the GeoJSON data.
-// let geoData = "complete.json";
+// A function to determine the marker size based on the population
+function markerSize(population) {
+  return Math.sqrt(population) * 50;
+}
 
-const geoData = require('./complete.json');
-console.log(data);
+// function markerColor(area) {
+//   if (area < 10000) return "#00FF00";
+//   else if (area < 100000) return "greenyellow";
+//   else if (area < 1000000) return "yellow";
+//   else if (area < 5000000) return "orange";
+//   else if (area < 10000000) return "orangered";
+//   else return "#FF0000";
+// }
 
-let geojson;
+function markerColor(area) {
+  if (area < 10000) return "##ff0000";
+  else if (area < 100000) return "orangered";
+  else if (area < 1000000) return "orange";
+  else if (area < 5000000) return "yellow";
+  else if (area < 10000000) return "greenyellow";
+  else return "#00FF00";
+}
+
+// Assemble the API query URL.
+// let url = "https://restcountries.com/v3.1/all";
 
 // Get the data with d3.
-d3.json(geoData).then(function(data) {
+d3.json(url).then(function(response) {
 
-  // Create a new choropleth layer.
-  geojson = L.choropleth(data, {
+  // Create a new marker cluster group.
+  let markers = L.marker();
 
-    // Define which property in the features to use.
-    valueProperty: "population",
+  console.log(response.length);
 
-    // Set the color scale.
-    scale: ["#ffffb2", "#b10026"],
+  // Loop through the data.
+  for (let i = 0; i < response.length; i++) {
 
-    // The number of breaks in the step range
-    steps: 10,
+    // console.log(response[i]);
 
-    // q for quartile, e for equidistant, k for k-means
-    mode: "q",
-    style: {
-      // Border color
-      color: "#fff",
-      weight: 1,
-      fillOpacity: 0.8
-    },
+    // Set the data location property to a variable.
+    let location = response[i].latlng;
+    let lat = location[0];
+    let long = location[1];
 
-//     // Binding a popup to each layer
-//     onEachFeature: function(feature, layer) {
-//       layer.bindPopup("<strong>" + feature.properties.NAME + "</strong><br /><br />Estimated employed population with children age 6-17: " +
-//         feature.properties.DP03_16E + "<br /><br />Estimated Total Income and Benefits for Families: $" + feature.properties.DP03_75E);
-//     }
-   }).addTo(myMap);
+    console.log(lat, long); 
+
+    // Check for the location property.
+    if (location) {
+
+      let country = L.circle([lat, long], {
+        title: response[i].name.common,
+        stroke: false,
+        fillOpacity: 0.5,
+        color: "black",
+        fillColor: markerColor(response[i].area),
+        radius: markerSize(response[i].population)
+      }).addTo(myMap);
+
+      // country.bindPopup(response[i].name.common)
+      country.bindPopup(`<h3>Location: ${response[i].name.common}</h3><hr>
+      <p>Population: ${response[i].population}</p>
+      <p>Area (sqkm): ${response[i].area}</p>`);
+
+      // Add a new marker to the cluster group, and bind a popup.
+      L.marker([parseFloat(lat), parseFloat(long)])
+        .bindPopup(response[i].name.common,
+          );
+    }
+
+  }
+
+  // Add our marker cluster layer to the map.
+  myMap.addLayer(markers);
 
 });
+};
+
+init();
