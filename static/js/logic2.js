@@ -44,7 +44,8 @@ function init() {
 
   let layout = {
     height: 500,
-    width: 700
+    width: 700,
+    title: "Population by Region"
   };
 
   Plotly.newPlot("pie", data, layout);
@@ -64,7 +65,8 @@ function init() {
 
   let layout2 = {
     height: 500,
-    width: 700
+    width: 700,
+    title: "Population by Subregion"
   };
 
   Plotly.newPlot("pie2", data2, layout2);
@@ -97,7 +99,8 @@ function getData() {
 
   let layout2 = {
     height: 500,
-    width: 700
+    width: 700,
+    title: "Population by Subregion"
   };
 
   Plotly.newPlot("pie2", data2, layout2);
