@@ -71,41 +71,7 @@ var violetIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
-//L.marker([51.5, -0.09], {icon: greenIcon}).addTo(map);
 
-// function markerColor(
-//   region) {
-//   if (
-//     region == 'Asia') return redIcon;
-//   else if (
-//     region == 'Oceania') return orangeIcon;
-//   else if (
-//     region == 'Europe') return goldIcon;
-//   else if (
-//     region == 'Americas') return violetIcon;
-//   else if (
-//     region == 'Antarctic') return blueIcon;
-//   else if (
-//     region == 'Africa') return greenIcon;
-//   else return "#00FF00";
-// }
-
-// function legendColor(
-//   region) {
-//   if (
-//     region == 'Asia') return "red";
-//   else if (
-//     region== 'Oceania') return "orange";
-//   else if (
-//     region == 'Europe') return "gold";
-//   else if (
-//     region == 'Americas') return "violet";
-//   else if (
-//     region == 'Antarctic') return "blue";
-//   else if (
-//     region == 'Africa') return "green";
-//   else return "#00FF00";
-// }
 /////////////////////////////////////////////////
 function markerColor(
   continents) {
